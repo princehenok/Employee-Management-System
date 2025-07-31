@@ -1,0 +1,88 @@
+/* App.css */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden; /* prevent horizontal scrollbar */
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9fafb;
+}
+
+
+
+
+/* Flex layout to stack header + content */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content fills rest of space */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Prevent content from hiding behind fixed navbars (if any) */
+main {
+  padding-top: 60px;
+}
+
+/* Global link styles */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #3b82f6;
+}
+
+/* Responsive container for all content */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header spacing if used globally */
+header {
+  padding: 2rem 1rem 1rem;
+  text-align: center;
+}
+
+/* Utilities */
+.text-center {
+  text-align: center;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+/* Page transitions (optional fade-in effect) */
+.fade-in {
+  animation: fadeIn 0.5s ease-in both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fallback styling if a component doesn't provide spacing */
+.page-content {
+  padding: 2rem 1rem;
+}

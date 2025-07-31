@@ -1,0 +1,149 @@
+.admin-dashboard {
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1100px;
+  margin: auto;
+  color: #1f2937;
+}
+
+.charts-section {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.chart {
+  flex: 1 1 400px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+}
+
+.employee-form-section {
+  background: #f9fafb;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+}
+
+.employee-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.employee-form input,
+.employee-form select {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  min-width: 150px;
+}
+
+.employee-form button {
+  padding: 0.6rem 1.5rem;
+  background-color: #22c55e;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.employee-form button:hover {
+  background-color: #16a34a;
+}
+
+.employee-table-section {
+  overflow-x: auto;
+}
+
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+.employee-table th,
+.employee-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.employee-table th {
+  background-color: #f3f4f6;
+  font-weight: 700;
+}
+
+.status-btn {
+  padding: 0.3rem 0.7rem;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.status-btn.active {
+  background-color: #22c55e;
+}
+
+.status-btn.inactive {
+  background-color: #ef4444;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 0.3rem 0.7rem;
+  margin-right: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn {
+  background-color: #3b82f6;
+}
+
+.edit-btn:hover {
+  background-color: #2563eb;
+}
+
+.delete-btn {
+  background-color: #ef4444;
+}
+
+.delete-btn:hover {
+  background-color: #b91c1c;
+}
+
+/* Responsive for small screens */
+@media (max-width: 600px) {
+  .charts-section {
+    flex-direction: column;
+  }
+
+  .employee-form {
+    flex-direction: column;
+  }
+
+  .employee-form input,
+  .employee-form select,
+  .employee-form button {
+    min-width: 100%;
+  }
+}
