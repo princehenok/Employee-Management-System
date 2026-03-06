@@ -5,7 +5,10 @@ import LandingPage from './components/LandingPage';
 import SignIn from './components/SignIn';
 import SignUp from './components/Signup';
 import EmployeeDashboard from './components/EmployeeDashboard';
-import AdminDashboard from './components/AdminDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
+import UserControl from './pages/UserControl';
 
 import './App.css';
 
@@ -19,7 +22,9 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/employee/dashboard" element={<EmployeeDashboard />} />  
-
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+<Route path="user-control" element={<UserControl />} />
       </Routes>
     </Router>
   );

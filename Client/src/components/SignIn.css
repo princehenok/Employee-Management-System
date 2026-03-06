@@ -63,3 +63,19 @@
 .signin-btn:hover {
   background-color: #16a34a;
 }
+.forgot-container {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.forgot-link {
+  color: #2b6cb0;
+  cursor: pointer;
+  font-size: 0.95rem;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.forgot-link:hover {
+  color: #1a365d;
+}
