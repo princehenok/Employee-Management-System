@@ -1,21 +1,41 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const mongoose = require('mongoose');
 
-const Employee = sequelize.define('Employee', {
+const employeeSchema = new mongoose.Schema({
   name: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: String,
+    required: true,
+    trim: true
   },
   email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
+    type: String,
+    required: true,
+    unique: true
   },
-  role: {
-    type: DataTypes.ENUM('Employee', 'Manager', 'Admin'),
-    allowNull: false,
-    defaultValue: 'Employee',
+  phone: {
+    type: String,
+    required: true
   },
-});
+  department: {
+    type: String,
+    required: true
+  },
+  position: {
+    type: String,
+    required: true
+  },
+  salary: {
+    type: Number,
+    required: true
+  },
+  joinDate: {
+    type: Date,
+    default: Date.now
+  },
+  status: {
+    type: String,
+    enum: ['Active', 'Inactive'],
+    default: 'Active'
+  }
+}, { timestamps: true });
 
-module.exports = Employee;
+module.exports = mongoose.model('Employee', employeeSchema);

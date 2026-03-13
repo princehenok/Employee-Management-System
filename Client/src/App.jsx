@@ -1,33 +1,41 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import LandingPage from './components/LandingPage';
-import SignIn from './components/SignIn';
-import SignUp from './components/Signup';
-import EmployeeDashboard from './components/EmployeeDashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import ResetPassword from './pages/ResetPassword';
-import ForgotPassword from './pages/ForgotPassword';
-import UserControl from './pages/UserControl';
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+import Employees from './pages/Employees'
+import Dashboard from './pages/Dashboard'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import EmployeeProfile from './pages/EmployeeProfile'
 
-import './App.css';
-
-function App() {
-  return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/employee/dashboard" element={<EmployeeDashboard />} />  
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="user-control" element={<UserControl />} />
-      </Routes>
-    </Router>
-  );
+function ProtectedRoute({ children }) {
+  const { user } = useAuth()
+  return user ? children : <Navigate to="/login" />
 }
 
-export default App;
+function AppRoutes() {
+  const { user } = useAuth()
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {user && <Navbar />}
+      <div className={user ? 'container mx-auto px-4 py-8' : ''}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
+          <Route path="/employees/:id" element={<ProtectedRoute><EmployeeProfile /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        </Routes>
+      </div>
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  )
+}
