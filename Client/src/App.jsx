@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import EmployeeProfile from './pages/EmployeeProfile'
+import AdminPanel from './pages/AdminPanel'
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth()
@@ -16,7 +17,7 @@ function ProtectedRoute({ children }) {
 function AppRoutes() {
   const { user } = useAuth()
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-800 transition-colors">
       {user && <Navbar />}
       <div className={user ? 'container mx-auto px-4 py-8' : ''}>
         <Routes>
@@ -26,6 +27,7 @@ function AppRoutes() {
           <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
           <Route path="/employees/:id" element={<ProtectedRoute><EmployeeProfile /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
         </Routes>
       </div>
     </div>

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useRole } from '../hooks/useRole'
 
 export default function Navbar() {
   const { user, logout, darkMode, toggleDarkMode } = useAuth()
+  const { isAdmin } = useRole()
   const navigate = useNavigate()
   const location = useLocation()
   const [scrolled, setScrolled] = useState(false)
@@ -58,9 +60,8 @@ export default function Navbar() {
             {/* Logo */}
             <Link to="/" className="group flex items-center gap-3">
               <div className="relative w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                <span className="text-white text-lg font-black">E</span>
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative z-10 text-white text-lg font-black">E</span>
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               <div>
                 <span className="text-lg font-black text-gray-900 dark:text-white tracking-tight">
@@ -92,6 +93,24 @@ export default function Navbar() {
                   </Link>
                 )
               })}
+
+              {/* Admin Link */}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className={`relative group flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    location.pathname === '/admin'
+                      ? 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20'
+                  }`}
+                >
+                  <span className="text-base group-hover:scale-125 transition-transform duration-300">👑</span>
+                  Admin
+                  {location.pathname === '/admin' && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-yellow-500 rounded-full" />
+                  )}
+                </Link>
+              )}
             </div>
 
             {/* Right Side */}
@@ -132,7 +151,13 @@ export default function Navbar() {
 
               {/* User Avatar + Dropdown */}
               <div className="relative group">
-                <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300">
+                <button className={`flex items-center gap-2 text-white px-4 py-2 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 ${
+                  user?.role === 'admin'
+                    ? 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:shadow-yellow-500/30'
+                    : user?.role === 'hr_manager'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-blue-500/30'
+                    : 'bg-gradient-to-r from-gray-500 to-gray-600 hover:shadow-gray-500/30'
+                }`}>
                   <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center text-sm font-black">
                     {user?.name?.charAt(0).toUpperCase()}
                   </div>
@@ -141,13 +166,24 @@ export default function Navbar() {
                 </button>
 
                 {/* Dropdown */}
-                <div className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 overflow-hidden">
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 overflow-hidden">
                   <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
                     <p className="font-bold text-gray-800 dark:text-white text-sm">{user?.name}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
-                    <span className="inline-block mt-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs px-2 py-0.5 rounded-full font-medium">
-                      ● Online
-                    </span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="inline-block bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs px-2 py-0.5 rounded-full font-medium">
+                        ● Online
+                      </span>
+                      <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-bold ${
+                        user?.role === 'admin'
+                          ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
+                          : user?.role === 'hr_manager'
+                          ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                      }`}>
+                        {user?.role === 'admin' ? '👑 Admin' : user?.role === 'hr_manager' ? '👔 HR Manager' : '👁️ Viewer'}
+                      </span>
+                    </div>
                   </div>
                   <div className="p-2">
                     {navLinks.map(({ to, label, icon }) => (
@@ -160,6 +196,15 @@ export default function Navbar() {
                         {label}
                       </Link>
                     ))}
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-all duration-200 font-semibold"
+                      >
+                        <span>👑</span>
+                        Admin Panel
+                      </Link>
+                    )}
                     <hr className="my-2 border-gray-100 dark:border-gray-700" />
                     <button
                       onClick={handleLogout}
@@ -203,6 +248,16 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-all"
+              >
+                <span className="text-lg">👑</span>
+                Admin Panel
+              </Link>
+            )}
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"

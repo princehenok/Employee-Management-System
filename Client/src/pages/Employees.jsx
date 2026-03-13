@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getEmployees, deleteEmployee } from '../services/api'
 import AddEmployeeForm from '../components/AddEmployeeForm'
 import EditEmployeeForm from '../components/EditEmployeeForm'
+import { useRole } from '../hooks/useRole'
 
 export default function Employees() {
   const [employees, setEmployees] = useState([])
@@ -16,6 +17,8 @@ export default function Employees() {
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [visible, setVisible] = useState(false)
   const itemsPerPage = 5
+
+  const { canEdit, canDelete } = useRole()
 
   useEffect(() => {
     fetchEmployees()
@@ -109,14 +112,16 @@ export default function Employees() {
             <span className="group-hover:animate-bounce">📥</span>
             Export CSV
           </button>
-          <button
-            onClick={() => { setShowForm(!showForm); setEditEmployee(null) }}
-            className="group relative flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300 overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="relative z-10 text-lg">{showForm ? '✕' : '+'}</span>
-            <span className="relative z-10">{showForm ? 'Cancel' : 'Add Employee'}</span>
-          </button>
+          {canEdit && (
+            <button
+              onClick={() => { setShowForm(!showForm); setEditEmployee(null) }}
+              className="group relative flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="relative z-10 text-lg">{showForm ? '✕' : '+'}</span>
+              <span className="relative z-10">{showForm ? 'Cancel' : 'Add Employee'}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -133,13 +138,13 @@ export default function Employees() {
       </div>
 
       {/* Forms */}
-      {showForm && (
-        <div className="mb-6 animate-fadeIn">
+      {showForm && canEdit && (
+        <div className="mb-6">
           <AddEmployeeForm onSuccess={() => { setShowForm(false); fetchEmployees() }} />
         </div>
       )}
-      {editEmployee && (
-        <div className="mb-6 animate-fadeIn">
+      {editEmployee && canEdit && (
+        <div className="mb-6">
           <EditEmployeeForm
             employee={editEmployee}
             onSuccess={() => { setEditEmployee(null); fetchEmployees() }}
@@ -240,25 +245,29 @@ export default function Employees() {
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <Link
                         to={`/employees/${emp._id}`}
-                        className="p-2 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/40 hover:scale-110 transition-all duration-200 text-sm font-medium"
+                        className="p-2 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/40 hover:scale-110 transition-all duration-200"
                         title="View Profile"
                       >
                         👁️
                       </Link>
-                      <button
-                        onClick={() => { setEditEmployee(emp); setShowForm(false) }}
-                        className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:scale-110 transition-all duration-200 text-sm font-medium"
-                        title="Edit Employee"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        onClick={() => setDeleteConfirm(emp)}
-                        className="p-2 bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 hover:scale-110 transition-all duration-200 text-sm font-medium"
-                        title="Delete Employee"
-                      >
-                        🗑️
-                      </button>
+                      {canEdit && (
+                        <button
+                          onClick={() => { setEditEmployee(emp); setShowForm(false) }}
+                          className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:scale-110 transition-all duration-200"
+                          title="Edit Employee"
+                        >
+                          ✏️
+                        </button>
+                      )}
+                      {canDelete && (
+                        <button
+                          onClick={() => setDeleteConfirm(emp)}
+                          className="p-2 bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 hover:scale-110 transition-all duration-200"
+                          title="Delete Employee"
+                        >
+                          🗑️
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -310,7 +319,7 @@ export default function Employees() {
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full border border-gray-100 dark:border-gray-700 animate-fadeIn">
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full border border-gray-100 dark:border-gray-700">
             <div className="text-center">
               <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
                 🗑️
