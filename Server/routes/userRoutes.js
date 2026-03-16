@@ -9,7 +9,7 @@ const { protect } = require('../middleware/authMiddleware')
 const { authorizeRoles } = require('../middleware/roleMiddleware')
 
 router.use(protect)
-router.use(authorizeRoles('admin'))
+router.use(authorizeRoles('admin')) // ← Only admin can access ALL user routes
 
 router.get('/', getUsers)
 router.put('/:id/role', updateUserRole)

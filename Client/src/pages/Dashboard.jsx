@@ -57,9 +57,7 @@ function DonutChart({ active, inactive, total }) {
   return (
     <div className="relative flex items-center justify-center">
       <svg width="160" height="160" viewBox="0 0 160 160">
-        {/* Background circle */}
         <circle cx="80" cy="80" r={radius} fill="none" stroke="#e5e7eb" strokeWidth="20" className="dark:stroke-gray-700" />
-        {/* Inactive arc */}
         <circle
           cx="80" cy="80" r={radius}
           fill="none"
@@ -71,7 +69,6 @@ function DonutChart({ active, inactive, total }) {
           className="transition-all duration-1000"
           style={{ transformOrigin: '50% 50%', transform: 'rotate(-90deg)' }}
         />
-        {/* Active arc */}
         <circle
           cx="80" cy="80" r={radius}
           fill="none"
@@ -109,7 +106,7 @@ function SalaryBar({ label, value, max, color }) {
     <div className="mb-4">
       <div className="flex justify-between mb-1.5">
         <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</span>
-        <span className="text-sm font-bold text-gray-800 dark:text-white">${value.toLocaleString()}</span>
+        <span className="text-sm font-bold text-gray-800 dark:text-white">ETB {value.toLocaleString()}</span>
       </div>
       <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
         <div
@@ -142,7 +139,6 @@ export default function Dashboard() {
     fetchEmployees()
   }, [])
 
-  // Stats
   const total = employees.length
   const active = employees.filter(e => e.status === 'Active').length
   const inactive = employees.filter(e => e.status === 'Inactive').length
@@ -151,7 +147,6 @@ export default function Dashboard() {
   const maxSalary = total ? Math.max(...employees.map(e => e.salary)) : 0
   const minSalary = total ? Math.min(...employees.map(e => e.salary)) : 0
 
-  // Departments
   const deptMap = employees.reduce((acc, emp) => {
     acc[emp.department] = (acc[emp.department] || 0) + 1
     return acc
@@ -159,7 +154,6 @@ export default function Dashboard() {
   const departments = Object.entries(deptMap).sort((a, b) => b[1] - a[1])
   const maxDeptCount = departments[0]?.[1] || 1
 
-  // Salary by department
   const salaryByDept = employees.reduce((acc, emp) => {
     if (!acc[emp.department]) acc[emp.department] = { total: 0, count: 0 }
     acc[emp.department].total += emp.salary
@@ -170,15 +164,11 @@ export default function Dashboard() {
     .map(([dept, data]) => ({ dept, avg: Math.round(data.total / data.count) }))
     .sort((a, b) => b.avg - a.avg)
 
-  // Top earners
   const topEarners = [...employees].sort((a, b) => b.salary - a.salary).slice(0, 5)
-
-  // Recently joined
   const recentEmployees = [...employees]
     .sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))
     .slice(0, 5)
 
-  // Position breakdown
   const positionMap = employees.reduce((acc, emp) => {
     acc[emp.position] = (acc[emp.position] || 0) + 1
     return acc
@@ -240,30 +230,26 @@ export default function Dashboard() {
       {/* ── OVERVIEW TAB ── */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
-
-          {/* KPI Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Total Employees', value: total, icon: '👥', color: 'from-blue-500 to-indigo-600', suffix: '' },
-              { label: 'Active', value: active, icon: '✅', color: 'from-green-400 to-emerald-600', suffix: '' },
-              { label: 'Inactive', value: inactive, icon: '⛔', color: 'from-red-400 to-rose-600', suffix: '' },
-              { label: 'Avg Salary', value: avgSalary, icon: '💰', color: 'from-purple-500 to-violet-600', prefix: '$' },
-            ].map(({ label, value, icon, color, suffix = '', prefix = '' }) => (
+              { label: 'Total Employees', value: total, icon: '👥', color: 'from-blue-500 to-indigo-600', prefix: '' },
+              { label: 'Active', value: active, icon: '✅', color: 'from-green-400 to-emerald-600', prefix: '' },
+              { label: 'Inactive', value: inactive, icon: '⛔', color: 'from-red-400 to-rose-600', prefix: '' },
+              { label: 'Avg Salary', value: avgSalary, icon: '💰', color: 'from-purple-500 to-violet-600', prefix: 'ETB ' },
+            ].map(({ label, value, icon, color, prefix }) => (
               <div key={label} className="relative bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700">
                 <div className={`absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br ${color} opacity-10 rounded-full`} />
                 <div className={`absolute -bottom-6 -left-6 w-24 h-24 bg-gradient-to-br ${color} opacity-5 rounded-full`} />
                 <p className="text-3xl mb-3">{icon}</p>
                 <p className={`text-3xl font-black bg-gradient-to-r ${color} bg-clip-text text-transparent`}>
-                  <Counter target={value} prefix={prefix} suffix={suffix} />
+                  <Counter target={value} prefix={prefix} />
                 </p>
                 <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mt-1">{label}</p>
               </div>
             ))}
           </div>
 
-          {/* Middle Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
             {/* Donut Chart */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
               <h3 className="font-bold text-gray-800 dark:text-white mb-4">Employee Status</h3>
@@ -302,7 +288,7 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Quick Stats */}
+            {/* Salary Insights */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
               <h3 className="font-bold text-gray-800 dark:text-white mb-4">Salary Insights</h3>
               <div className="space-y-4">
@@ -314,16 +300,14 @@ export default function Dashboard() {
                 ].map(({ label, value, color, bg, icon }) => (
                   <div key={label} className={`flex justify-between items-center ${bg} rounded-xl px-4 py-2.5`}>
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{icon} {label}</span>
-                    <span className={`font-black text-sm ${color}`}>${value.toLocaleString()}</span>
+                    <span className={`font-black text-sm ${color}`}>ETB {value.toLocaleString()}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Bottom Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             {/* Top Earners */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
               <h3 className="font-bold text-gray-800 dark:text-white mb-4">🏆 Top Earners</h3>
@@ -348,7 +332,7 @@ export default function Dashboard() {
                         <p className="font-semibold text-gray-800 dark:text-white text-sm truncate">{emp.name}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{emp.position}</p>
                       </div>
-                      <span className="font-black text-green-600 dark:text-green-400 text-sm">${emp.salary.toLocaleString()}</span>
+                      <span className="font-black text-green-600 dark:text-green-400 text-sm">ETB {emp.salary.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
@@ -388,7 +372,7 @@ export default function Dashboard() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {/* Salary by Department */}
+            {/* Avg Salary by Department */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
               <h3 className="font-bold text-gray-800 dark:text-white mb-6">💰 Avg Salary by Department</h3>
               {avgSalaryByDept.length === 0 ? (
@@ -408,14 +392,14 @@ export default function Dashboard() {
 
             {/* Salary Distribution */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h3 className="font-bold text-gray-800 dark:text-white mb-6">📊 Salary Distribution</h3>
+              <h3 className="font-bold text-gray-800 dark:text-white mb-6">📊 Salary Distribution (ETB)</h3>
               <div className="space-y-4">
                 {[
-                  { range: 'Under $30k', count: employees.filter(e => e.salary < 30000).length, color: 'from-red-400 to-rose-500' },
-                  { range: '$30k – $50k', count: employees.filter(e => e.salary >= 30000 && e.salary < 50000).length, color: 'from-yellow-400 to-amber-500' },
-                  { range: '$50k – $80k', count: employees.filter(e => e.salary >= 50000 && e.salary < 80000).length, color: 'from-blue-400 to-indigo-500' },
-                  { range: '$80k – $100k', count: employees.filter(e => e.salary >= 80000 && e.salary < 100000).length, color: 'from-green-400 to-emerald-500' },
-                  { range: 'Over $100k', count: employees.filter(e => e.salary >= 100000).length, color: 'from-purple-400 to-violet-500' },
+                  { range: 'Under ETB 5,000', count: employees.filter(e => e.salary < 5000).length, color: 'from-red-400 to-rose-500' },
+                  { range: 'ETB 5,000 – 10,000', count: employees.filter(e => e.salary >= 5000 && e.salary < 10000).length, color: 'from-yellow-400 to-amber-500' },
+                  { range: 'ETB 10,000 – 20,000', count: employees.filter(e => e.salary >= 10000 && e.salary < 20000).length, color: 'from-blue-400 to-indigo-500' },
+                  { range: 'ETB 20,000 – 50,000', count: employees.filter(e => e.salary >= 20000 && e.salary < 50000).length, color: 'from-green-400 to-emerald-500' },
+                  { range: 'Over ETB 50,000', count: employees.filter(e => e.salary >= 50000).length, color: 'from-purple-400 to-violet-500' },
                 ].map(({ range, count, color }) => (
                   <div key={range}>
                     <div className="flex justify-between mb-1.5">
@@ -433,16 +417,16 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Payroll Summary */}
+            {/* Payroll Summary Banner */}
             <div className="md:col-span-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-20 -translate-y-20" />
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -translate-x-10 translate-y-10" />
               <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
-                  { label: 'Monthly Payroll', value: Math.round(totalSalary / 12), prefix: '$' },
-                  { label: 'Annual Payroll', value: totalSalary, prefix: '$' },
-                  { label: 'Avg Monthly', value: Math.round(avgSalary / 12), prefix: '$' },
-                  { label: 'Cost Per Employee', value: avgSalary, prefix: '$' },
+                  { label: 'Monthly Payroll', value: totalSalary, prefix: 'ETB ' },
+                  { label: 'Annual Payroll', value: totalSalary * 12, prefix: 'ETB ' },
+                  { label: 'Avg Monthly Salary', value: avgSalary, prefix: 'ETB ' },
+                  { label: 'Total Employees', value: total, prefix: '' },
                 ].map(({ label, value, prefix }) => (
                   <div key={label}>
                     <p className="text-blue-200 text-sm font-medium mb-1">{label}</p>
@@ -460,8 +444,6 @@ export default function Dashboard() {
       {/* ── DEPARTMENTS TAB ── */}
       {activeTab === 'departments' && (
         <div className="space-y-6">
-
-          {/* Department Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {departments.map(([dept, count], i) => {
               const deptEmployees = employees.filter(e => e.department === dept)
@@ -486,7 +468,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-500 dark:text-gray-400">Avg Salary</span>
-                      <span className="font-bold text-gray-800 dark:text-white">${deptAvgSalary.toLocaleString()}</span>
+                      <span className="font-bold text-gray-800 dark:text-white">ETB {deptAvgSalary.toLocaleString()}</span>
                     </div>
                     <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 mt-3">
                       <div

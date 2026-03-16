@@ -47,10 +47,11 @@ export default function Employees() {
   }
 
   const exportToCSV = () => {
-    const headers = ['Name', 'Email', 'Phone', 'Department', 'Position', 'Salary', 'Status']
+    const headers = ['Name', 'Email', 'Phone', 'Department', 'Position', 'Monthly Salary (ETB)', 'Status']
     const rows = filtered.map(emp => [
       emp.name, emp.email, emp.phone,
-      emp.department, emp.position, emp.salary, emp.status
+      emp.department, emp.position,
+      emp.salary, emp.status
     ])
     const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n')
     const blob = new Blob([csvContent], { type: 'text/csv' })
@@ -199,7 +200,7 @@ export default function Employees() {
                 <th className="text-left px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Employee</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Department</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Position</th>
-                <th className="text-left px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Salary</th>
+                <th className="text-left px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Monthly Salary</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
               </tr>
@@ -229,7 +230,7 @@ export default function Employees() {
                   </td>
                   <td className="px-6 py-4 text-gray-600 dark:text-gray-300 text-sm font-medium">{emp.position}</td>
                   <td className="px-6 py-4">
-                    <span className="font-bold text-gray-800 dark:text-white">${emp.salary.toLocaleString()}</span>
+                    <span className="font-bold text-gray-800 dark:text-white">ETB {emp.salary.toLocaleString()}/mo</span>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { getEmployee } from '../services/api'
+import { generatePayslip } from '../utils/generatePayslip'
 
 export default function EmployeeProfile() {
   const { id } = useParams()
@@ -24,7 +25,7 @@ export default function EmployeeProfile() {
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
-      <p className="text-gray-500 text-lg">Loading profile...</p>
+      <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
     </div>
   )
 
@@ -40,61 +41,61 @@ export default function EmployeeProfile() {
       {/* Back button */}
       <button
         onClick={() => navigate('/employees')}
-        className="text-blue-600 hover:underline mb-6 flex items-center gap-1"
+        className="text-blue-600 dark:text-blue-400 hover:underline mb-6 flex items-center gap-1 font-medium"
       >
         ← Back to Employees
       </button>
 
       {/* Profile Header */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
         <div className="flex items-center gap-6">
-          <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-3xl font-black shadow-lg">
             {employee.name.charAt(0).toUpperCase()}
           </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">{employee.name}</h2>
-            <p className="text-gray-500">{employee.position} — {employee.department}</p>
-            <span className={`mt-2 inline-block px-3 py-1 rounded-full text-sm font-medium ${
-              employee.status === 'Active'
-                ? 'bg-green-100 text-green-700'
-                : 'bg-red-100 text-red-700'
-            }`}>
-              {employee.status}
-            </span>
+          <div className="flex-1">
+            <h2 className="text-2xl font-black text-gray-800 dark:text-white">{employee.name}</h2>
+            <p className="text-gray-500 dark:text-gray-300">{employee.position} — {employee.department}</p>
+            <div className="flex items-center gap-3 mt-3">
+              <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+                employee.status === 'Active'
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                  : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+              }`}>
+                <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${employee.status === 'Active' ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                {employee.status}
+              </span>
+              <button
+                onClick={() => generatePayslip(employee)}
+                className="group flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-1.5 rounded-xl font-semibold text-sm hover:shadow-lg hover:shadow-green-500/30 hover:scale-105 transition-all duration-300"
+              >
+                <span className="group-hover:animate-bounce">📄</span>
+                Download Payslip
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Details Grid */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-500 text-sm mb-1">Email</p>
-          <p className="font-semibold text-gray-800">{employee.email}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-500 text-sm mb-1">Phone</p>
-          <p className="font-semibold text-gray-800">{employee.phone}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-500 text-sm mb-1">Department</p>
-          <p className="font-semibold text-gray-800">{employee.department}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-500 text-sm mb-1">Position</p>
-          <p className="font-semibold text-gray-800">{employee.position}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-500 text-sm mb-1">Salary</p>
-          <p className="font-semibold text-gray-800">${employee.salary.toLocaleString()}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-500 text-sm mb-1">Join Date</p>
-          <p className="font-semibold text-gray-800">
-            {new Date(employee.joinDate).toLocaleDateString('en-US', {
-              year: 'numeric', month: 'long', day: 'numeric'
-            })}
-          </p>
-        </div>
+        {[
+          { label: 'Email', value: employee.email, icon: '📧' },
+          { label: 'Phone', value: employee.phone, icon: '📱' },
+          { label: 'Department', value: employee.department, icon: '🏢' },
+          { label: 'Position', value: employee.position, icon: '💼' },
+          { label: 'Monthly Salary', value: `ETB ${employee.salary.toLocaleString()}`, icon: '💰' },
+          { label: 'Join Date', value: new Date(employee.joinDate).toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric'
+          }), icon: '📅' }
+        ].map(({ label, value, icon }) => (
+          <div key={label} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">{icon}</span>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{label}</p>
+            </div>
+            <p className="font-bold text-gray-800 dark:text-white">{value}</p>
+          </div>
+        ))}
       </div>
     </div>
   )
